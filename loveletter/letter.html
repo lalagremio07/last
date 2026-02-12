@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Letter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="hearts-canvas" aria-hidden="true"></canvas>
+  <div class="stage">
+    <div class="envelope-wrap" id="envelope">
+      <div class="letter" id="letter" role="button" tabindex="0" aria-label="Open letter" title="Open letter"></div>
+
+      <svg id="envelope-svg" viewBox="0 0 320 260" width="480" height="390" role="img" aria-label="Envelope">
+        <defs>
+          <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="7" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+
+          <clipPath id="env-clip">
+            <rect x="58" y="92" width="204" height="132" rx="10" />
+          </clipPath>
+
+          <clipPath id="shade-left">
+            <polygon points="58,92 58,224 160,158" />
+          </clipPath>
+          <clipPath id="shade-right">
+            <polygon points="262,92 262,224 160,158" />
+          </clipPath>
+        </defs>
+
+        <!-- Click target: only painted strokes/fills respond (not the full SVG box) -->
+        <g id="env-click">
+          <!-- Base / outline -->
+          <g id="env-ink" filter="url(#roughen)">
+            <!-- Full envelope fill, covers all corners (polygon) -->
+            <polygon points="56,224 56,92 264,92 264,224" fill="var(--env-fill)" />
+            <!-- Main outline, slightly jittered for hand-drawn look -->
+            <!-- Overdraw the top line slightly past the corners to avoid anti-aliasing gaps -->
+            <polyline points="56,224 56,92 264,92 264,224 56,224" fill="none" stroke="var(--env-ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+
+            <!-- Mask out any unwanted mid-shadow under the fold intersection -->
+            <ellipse cx="160" cy="165" rx="64" ry="34" fill="var(--env-fill)" />
+
+            <!-- Bottom fold lines (the 'X'), thicker for visibility -->
+            <path d="M62 222 L160 158 L258 222" fill="none" stroke="var(--env-ink)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M62 222 L160 158" fill="none" stroke="var(--env-ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M258 222 L160 158" fill="none" stroke="var(--env-ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+
+            <!-- Side folds, slightly curved -->
+            <g clip-path="url(#env-clip)" opacity="0.9">
+              <path d="M62 94 Q110 120 160 158 Q210 120 258 94" fill="none" stroke="var(--env-ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85" />
+            </g>
+
+            <!-- Enhanced hand-drawn shading inspired by reference -->
+            <g opacity="0.32">
+              <!-- Left corner hatching -->
+              <path d="M62 224 Q70 210 90 200" stroke="var(--env-ink)" stroke-width="1.5" stroke-linecap="round" />
+              <path d="M66 220 Q80 208 98 198" stroke="var(--env-ink)" stroke-width="1.2" stroke-linecap="round" />
+              <path d="M70 216 Q90 206 106 196" stroke="var(--env-ink)" stroke-width="1.1" stroke-linecap="round" />
+              <!-- Right corner hatching -->
+              <path d="M258 224 Q250 210 230 200" stroke="var(--env-ink)" stroke-width="1.5" stroke-linecap="round" />
+              <path d="M254 220 Q240 208 222 198" stroke="var(--env-ink)" stroke-width="1.2" stroke-linecap="round" />
+              <path d="M250 216 Q230 206 214 196" stroke="var(--env-ink)" stroke-width="1.1" stroke-linecap="round" />
+              <!-- Flap hatching -->
+              <path d="M90 110 Q120 120 160 130 Q200 120 230 110" stroke="var(--env-ink)" stroke-width="0.7" stroke-linecap="round" />
+              <path d="M100 116 Q130 124 160 132 Q190 124 220 116" stroke="var(--env-ink)" stroke-width="0.6" stroke-linecap="round" />
+              <!-- Random sketch marks for organic feel -->
+              <path d="M70 120 Q80 130 90 128" stroke="var(--env-ink)" stroke-width="0.7" stroke-linecap="round" />
+              <path d="M250 120 Q240 130 230 128" stroke="var(--env-ink)" stroke-width="0.7" stroke-linecap="round" />
+            </g>
+          </g>
+
+          <!-- Flap (closed by default, curved point; opens upward on click) -->
+          <g id="flap-group" filter="url(#roughen)">
+            <!-- Only hand-drawn hatching for shadow, no filled shape -->
+            <!-- (Removed all filled paths/polygons that could cause a gray shadow) -->
+            <path id="flap-fill" d="M58 92 L262 92 L166 150 Q160 157 154 150 L58 92 Z" fill="var(--env-fill)" />
+            <path id="flap-outline" d="M58 92 L154 150 Q160 157 166 150 L262 92" fill="none" stroke="var(--env-ink)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" />
+          </g>
+        </g>
+        <!-- no paper-texture needed, using --env-fill for both flap and body -->
+      </svg>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.min.js"></script>
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+  <audio src="MyAudio"></audio>
+</body>
+</html>
