@@ -1,0 +1,649 @@
+@media (max-width: 600px) {
+  .envelope-wrap.is-expanded .paper {
+    position: relative;
+  }
+  .envelope-wrap.is-expanded .next-page-btn,
+  .envelope-wrap.is-expanded .back-page-btn {
+    position: absolute !important;
+    bottom: 44px !important;
+    z-index: 10;
+    font-size: 13px !important;
+    padding: 5px 8px !important;
+    min-width: 70px;
+    max-width: 140px;
+    width: auto;
+    border-radius: 8px;
+    margin-bottom: 0;
+    margin-top: 0;
+    box-sizing: border-box;
+  }
+  .envelope-wrap.is-expanded .next-page-btn {
+    right: 10px !important;
+    left: auto !important;
+  }
+  .envelope-wrap.is-expanded .back-page-btn {
+    left: 10px !important;
+    right: auto !important;
+  }
+}
+/* Cartoony, exaggerated, responsive envelope + paper letter */
+
+:root {
+  --bg: #ffe6ea;
+  --ink: #3a2323;
+  --paper: #fffbe7;
+
+  /* Sketch envelope palette */
+  --env-ink: #1b2c8e;
+  --env-fill: #fffdf6;
+  --flap-fill: #ffffff;
+
+  /* How far the paper slides out when the envelope opens (negative = upward). */
+  --letter-open-y: -42%;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  margin: 0;
+  display: grid;
+  place-items: center;
+  overflow-x: hidden;
+}
+
+#hearts-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: auto;
+  z-index: 0;
+}
+
+.stage {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.envelope-wrap {
+  pointer-events: auto;
+}
+
+.envelope-wrap {
+  position: relative;
+  /* Use fit-content so the div wraps the SVG's actual drawing, not a big box */
+  width: fit-content;
+  height: fit-content;
+  filter: drop-shadow(0 10px 26px rgba(0,0,0,0.14));
+  perspective: 1200px;
+}
+
+#envelope-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: default;
+  transform-style: preserve-3d;
+  position: relative;
+  z-index: 10;
+  /* Prevent the whole SVG box from acting like a giant hit target.
+     We re-enable pointer events only on the painted envelope group. */
+  pointer-events: none;
+}
+
+/* Click target: only the painted envelope art */
+#env-click {
+  cursor: pointer;
+  pointer-events: visiblePainted;
+}
+
+/* Flap animation: closed (down) -> open (up/back) */
+#flap-group {
+  transform-box: view-box;
+  transform-origin: 160px 92px;
+  transform: rotateX(0deg) translateZ(0);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: transform 0.85s cubic-bezier(.22, 1.6, .25, 1);
+}
+
+.envelope-wrap.is-open #flap-group {
+  transform: rotateX(-160deg);
+}
+
+/* Letter as real paper (HTML) so it looks like a letter */
+.letter {
+  position: absolute;
+  left: 50%;
+  bottom: 18%;
+  width: 78%;
+  height: 56%;
+  z-index: 20;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  transform: translate(-50%, 18%) scaleY(0.15);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.85s cubic-bezier(.22, 1.6, .25, 1),
+    opacity 0.28s ease;
+}
+
+.envelope-wrap.is-open .letter {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, var(--letter-open-y)) scaleY(1) rotate(-1deg);
+}
+
+.paper {
+  position: relative;
+  height: 100%;
+  background: var(--paper);
+  border: 5px solid rgba(27,44,142,0.75);
+  border-radius: 14px;
+  box-shadow: 0 10px 0 rgba(58,35,35,0.22);
+  overflow: hidden;
+}
+
+.paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,0.55), rgba(167, 147, 199, 0) 40%),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(215,38,96,0.0) 0px,
+      rgba(215,38,96,0.0) 18px,
+      rgba(215,38,96,0.08) 19px,
+      rgba(215,38,96,0.08) 20px
+    );
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.paper-body {
+  position: relative;
+  padding: 18px 18px 18px;
+  text-align: center;
+  z-index: 1;
+  font-family: "Times New Roman", Times, serif;
+  color: #8B0000;
+}
+
+
+ .paper-body strong {
+  font-size: 22px;
+  color: #8B0000;
+}
+
+
+
+.paper-body h2 {
+  margin: 16px 0 10px;
+  font-size: 28px;
+}
+
+.paper-body p {
+  margin: 10px 0;
+  font-size: 24px;
+  opacity: 0.96;
+}
+
+@media (max-width: 600px) {
+  .envelope-wrap.is-expanded .paper {
+    position: relative;
+  }
+  .envelope-wrap.is-expanded .next-page-btn,
+  .envelope-wrap.is-expanded .back-page-btn {
+    position: absolute !important;
+    bottom: 44px !important;
+    z-index: 10;
+    font-size: 13px !important;
+    padding: 5px 8px !important;
+    min-width: 70px;
+    max-width: 140px;
+    width: auto;
+    border-radius: 8px;
+    margin-bottom: 0;
+    margin-top: 0;
+    box-sizing: border-box;
+  }
+  .envelope-wrap.is-expanded .next-page-btn {
+    right: 10px !important;
+    left: auto !important;
+  }
+  .envelope-wrap.is-expanded .back-page-btn {
+    left: 10px !important;
+    right: auto !important;
+  }
+}
+/* Cartoony, exaggerated, responsive envelope + paper letter */
+
+:root {
+  --bg: #ffe6ea;
+  --ink: #3a2323;
+  --paper: #fffbe7;
+
+  /* Sketch envelope palette */
+  --env-ink: #1b2c8e;
+  --env-fill: #fffdf6;
+  --flap-fill: #ffffff;
+
+  /* How far the paper slides out when the envelope opens (negative = upward). */
+  --letter-open-y: -42%;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  margin: 0;
+  display: grid;
+  place-items: center;
+  overflow-x: hidden;
+}
+
+#hearts-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: auto;
+  z-index: 0;
+}
+
+.stage {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.envelope-wrap {
+  pointer-events: auto;
+}
+
+.envelope-wrap {
+  position: relative;
+  /* Use fit-content so the div wraps the SVG's actual drawing, not a big box */
+  width: fit-content;
+  height: fit-content;
+  filter: drop-shadow(0 10px 26px rgba(0,0,0,0.14));
+  perspective: 1200px;
+}
+
+#envelope-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: default;
+  transform-style: preserve-3d;
+  position: relative;
+  z-index: 10;
+  /* Prevent the whole SVG box from acting like a giant hit target.
+     We re-enable pointer events only on the painted envelope group. */
+  pointer-events: none;
+}
+
+/* Click target: only the painted envelope art */
+#env-click {
+  cursor: pointer;
+  pointer-events: visiblePainted;
+}
+
+/* Flap animation: closed (down) -> open (up/back) */
+#flap-group {
+  transform-box: view-box;
+  transform-origin: 160px 92px;
+  transform: rotateX(0deg) translateZ(0);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: transform 0.85s cubic-bezier(.22, 1.6, .25, 1);
+}
+
+.envelope-wrap.is-open #flap-group {
+  transform: rotateX(-160deg);
+}
+
+/* Letter as real paper (HTML) so it looks like a letter */
+.letter {
+  position: absolute;
+  left: 50%;
+  bottom: 18%;
+  width: 78%;
+  height: 56%;
+  z-index: 20;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  transform: translate(-50%, 18%) scaleY(0.15);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.85s cubic-bezier(.22, 1.6, .25, 1),
+    opacity 0.28s ease;
+}
+
+.envelope-wrap.is-open .letter {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, var(--letter-open-y)) scaleY(1) rotate(-1deg);
+}
+
+.paper {
+  position: relative;
+  height: 100%;
+  background: var(--paper);
+  border: 5px solid rgba(27,44,142,0.75);
+  border-radius: 14px;
+  box-shadow: 0 10px 0 rgba(58,35,35,0.22);
+  overflow: hidden;
+}
+
+.paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,0.55), rgba(167, 147, 199, 0) 40%),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(215,38,96,0.0) 0px,
+      rgba(215,38,96,0.0) 18px,
+      rgba(215,38,96,0.08) 19px,
+      rgba(215,38,96,0.08) 20px
+    );
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.paper-body {
+  position: relative;
+  padding: 18px 18px 18px;
+  text-align: center;
+  z-index: 1;
+  font-family: "Times New Roman", Times, serif;
+  color: #8B0000;
+}
+
+
+ .paper-body strong {
+  font-size: 22px;
+  color: #8B0000;
+}
+
+
+
+.paper-body h2 {
+  margin: 16px 0 10px;
+  font-size: 28px;
+}
+
+.paper-body p {
+  margin: 10px 0;
+  font-size: 24px;
+  opacity: 0.96;
+}
+
+/* Expanded letter should read like a real note (left aligned) */
+.envelope-wrap.is-expanded .paper-body {
+  text-align: left;
+  /* extra bottom padding so paging buttons always fit */
+  padding: 28px 34px 96px;
+}
+
+.envelope-wrap.is-expanded .paper-body h2 {
+  margin-top: 10px;
+}
+
+.envelope-wrap.is-expanded .paper-body p {
+  line-height: 1.6;
+  max-width: 60ch;
+  opacity: 1;
+}
+
+/* Collapsed state: no text, just subtle hint lines */
+.peek-lines {
+  margin-top: 10px;
+  display: grid;
+  gap: 9px;
+  justify-items: start;
+}
+
+.letter-content {
+  display: none;
+}
+
+.envelope-wrap.is-expanded .peek-lines {
+  display: none;
+}
+
+.envelope-wrap.is-expanded .letter-content {
+  display: block;
+}
+
+.peek-lines span {
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(215, 38, 96, 0.18);
+}
+
+.peek-lines span:nth-child(1) { width: 78%; }
+.peek-lines span:nth-child(2) { width: 70%; }
+.peek-lines span:nth-child(3) { width: 74%; }
+.peek-lines span:nth-child(4) { width: 62%; }
+.peek-lines span:nth-child(5) { width: 76%; }
+.peek-lines span:nth-child(6) { width: 58%; }
+.peek-lines span:nth-child(7) { width: 72%; }
+.peek-lines span:nth-child(8) { width: 66%; }
+.peek-lines span:nth-child(9) { width: 44%; }
+
+.peek-lines span:nth-child(n+10) {
+  width: 70%;
+  opacity: 0.9;
+}
+
+.envelope-wrap.is-expanded .signature {
+  margin-top: 18px;
+  font-size: 18px;
+}
+
+/* Expanded letter becomes a modal-like paper */
+.envelope-wrap.is-expanded .letter {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  bottom: auto;
+  width: min(720px, 92vw);
+  height: min(76vh, 720px);
+  transform: translate(-50%, -50%) rotate(-1.5deg) scale(1);
+  opacity: 1;
+  z-index: 50;
+}
+
+.envelope-wrap.is-expanded .paper {
+  border-radius: 18px;
+  box-shadow: 0 18px 0 rgba(58,35,35,0.22), 0 30px 70px rgba(0,0,0,0.22);
+  height: 76vh;
+  min-height: 180px;
+  max-height: 76vh;
+  overflow-y: hidden;
+}
+
+@media (max-width: 600px) {
+  .envelope-wrap.is-expanded .paper {
+    height: 54vh;
+    max-height: 54vh;
+    min-height: 120px;
+  }
+
+  .envelope-wrap.is-expanded .paper-body {
+    padding-bottom: 120px;
+  }
+  .envelope-wrap.is-expanded .paper-body h2 {
+    font-size: 17px;
+    margin: 8px 0 5px;
+  }
+  .envelope-wrap.is-expanded .paper-body p {
+    font-size: 13px;
+    margin: 5px 0;
+  }
+  .envelope-wrap.is-expanded .signature {
+    font-size: 12px;
+  }
+  .glow {
+  color: #ff2e63; /* romantic pink/red */
+  font-size: 26px;
+  font-weight: bold;
+  text-shadow: 
+    0 0 5px #ff9aa2,
+    0 0 10px #ff6f91,
+    0 0 20px #ff2e63,
+    0 0 40px #ff2e63;
+  animation: glowPulse 1.5s infinite alternate;
+}
+
+@keyframes glowPulse {
+  from {
+    text-shadow: 
+      0 0 5px #ff9aa2,
+      0 0 10px #ff6f91,
+      0 0 20px #ff2e63,
+      0 0 40px #ff2e63;
+  }
+  to {
+    text-shadow: 
+      0 0 10px #ffc1cc,
+      0 0 20px #ff6f91,
+      0 0 30px #ff2e63,
+      0 0 60px #ff2e63;
+  }
+}
+
+  }
+
+/* Expanded letter should read like a real note (left aligned) */
+.envelope-wrap.is-expanded .paper-body {
+  text-align: left;
+  /* extra bottom padding so paging buttons always fit */
+  padding: 28px 34px 96px;
+}
+
+.envelope-wrap.is-expanded .paper-body h2 {
+  margin-top: 10px;
+}
+
+.envelope-wrap.is-expanded .paper-body p {
+  line-height: 1.6;
+  max-width: 60ch;
+  opacity: 1;
+}
+
+/* Collapsed state: no text, just subtle hint lines */
+.peek-lines {
+  margin-top: 10px;
+  display: grid;
+  gap: 9px;
+  justify-items: start;
+}
+
+.letter-content {
+  display: none;
+}
+
+.envelope-wrap.is-expanded .peek-lines {
+  display: none;
+}
+
+.envelope-wrap.is-expanded .letter-content {
+  display: block;
+}
+
+.peek-lines span {
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(215, 38, 96, 0.18);
+}
+
+.peek-lines span:nth-child(1) { width: 78%; }
+.peek-lines span:nth-child(2) { width: 70%; }
+.peek-lines span:nth-child(3) { width: 74%; }
+.peek-lines span:nth-child(4) { width: 62%; }
+.peek-lines span:nth-child(5) { width: 76%; }
+.peek-lines span:nth-child(6) { width: 58%; }
+.peek-lines span:nth-child(7) { width: 72%; }
+.peek-lines span:nth-child(8) { width: 66%; }
+.peek-lines span:nth-child(9) { width: 44%; }
+
+.peek-lines span:nth-child(n+10) {
+  width: 70%;
+  opacity: 0.9;
+}
+
+.envelope-wrap.is-expanded .signature {
+  margin-top: 18px;
+  font-size: 18px;
+}
+
+/* Expanded letter becomes a modal-like paper */
+.envelope-wrap.is-expanded .letter {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  bottom: auto;
+  width: min(720px, 92vw);
+  height: min(76vh, 720px);
+  transform: translate(-50%, -50%) rotate(-1.5deg) scale(1);
+  opacity: 1;
+  z-index: 50;
+}
+
+.envelope-wrap.is-expanded .paper {
+  border-radius: 18px;
+  box-shadow: 0 18px 0 rgba(58,35,35,0.22), 0 30px 70px rgba(0,0,0,0.22);
+  height: 76vh;
+  min-height: 180px;
+  max-height: 76vh;
+  overflow-y: hidden;
+}
+
+@media (max-width: 600px) {
+  .envelope-wrap.is-expanded .paper {
+    height: 54vh;
+    max-height: 54vh;
+    min-height: 120px;
+  }
+
+  .envelope-wrap.is-expanded .paper-body {
+    padding-bottom: 120px;
+  }
+  .envelope-wrap.is-expanded .paper-body h2 {
+    font-size: 17px;
+    margin: 8px 0 5px;
+  }
+  .envelope-wrap.is-expanded .paper-body p {
+    font-size: 13px;
+    margin: 5px 0;
+  }
+  .envelope-wrap.is-expanded .signature {
+    font-size: 12px;
+  }
+  
+  }
